@@ -249,7 +249,7 @@ def gerador_de_calculos_e_graficos(data, coluna_data, coluna_id, coluna_categori
 
 
         #Gráfico de Retenção de Clientes
-        cor = "red" if taxa_retencao <0.5 else "green"
+        cor = "red" if taxa_retencao <0.2 else "green"
         fig9 = go.Figure(go.Indicator(mode="gauge+number", 
                                     value= taxa_retencao*100,
                                     title={"text": f"Taxa de Recorrência de Clientes: {taxa_retencao*100:.2f}% "},
@@ -389,7 +389,7 @@ if processar:
                 st.markdown(""":green[**Informação:**] *Para garantir uma visualização mais robusta dos dados filtre as datas com um período
                         de pelo menos 4 meses para obter uma visualização personalizada e dinâmica dos dados. Caso contrário
                         alguns gráficos podem apresentar valores nulos ou vazios, o que pode dificultar a análise.
-                        Utilizando essa abordagem você garante a minimização de gráficos incompletos.*""")
+                        Utilizando essa abordagem você garante a minimização de gráficos incompletos e maximização de resultados relevantes nas análises.*""")
                 st.markdown(":green[**Dica:**]  *Altere as datas na barra lateral ao lado e veja como os valores nos gráficos se atualizam... \
                             Alternativamente você pode mantê-lo em branco para obter uma visão menos focada utilizando todos os dados disponíveis*")            
                 
@@ -425,10 +425,18 @@ if processar:
                             De {(inicio_periodo_anterior).strftime('%d-%m-%Y')} até {(dados_agrupados.index.min() - pd.DateOffset(days=1)).strftime('%d-%m-%Y')}.\
                             \nTotal de {len(periodo_anterior)} meses", value=f"R$ {soma_periodo_anterior:,.2f}", delta=f"{(soma_periodo_anterior - soma_periodo_atual):,.2f}", delta_color="normal" )
                     
+                                        
                     variacao_absoluta = soma_periodo_atual - soma_periodo_anterior
                     sinal = "+" if variacao_absoluta >=0 else "-"
                     st.metric(label="Variação do período atual em relação ao período de comparação", value=f"{sinal} R$ {(variacao_absoluta):,.2f}",
                             delta=f"{((soma_periodo_atual / soma_periodo_anterior) - 1)* 100:,.2f}%", delta_color="normal")
+                    
+                    if len(periodo_anterior)< len(dados_agrupados):
+                        st.warning(f"""*O conjunto de dados não é grande o suficiente para gerar um período de comparação justo.
+                                   Há apenas {len(periodo_anterior)} meses restantes para o período de comparação,
+                                   mas foram utilizados {len(dados_agrupados)} meses na análise principal.
+                                   Para uma análise mais precisa considere utilizar um conjunto de dados maior 
+                                   ou filtre um período de tempo menor.*""")
                     
                 else:
                     st.markdown(""":green[**Informação importante:**] *Utilize as configurações adicionais na barra lateral para filtrar datas específicas.
