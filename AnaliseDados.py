@@ -382,7 +382,7 @@ if processar:
                     data = data.set_index(coluna_data) # Reconfiguração do índice do dataframe com a coluna de data
                     
 
-                st.markdown(f""":green[**Descrição:**] *O gráfico acima exibe o total vendido em cada categoria no período selecionado.\
+                st.markdown(f""":green[**Descrição:**] *O gráfico acima mostra o total vendido em cada categoria no período selecionado.\
                             \nExibindo resultados nos gráficos desde a data inicial de ***{(data.index.date.min()).strftime("%d-%m-%Y")}***
                             até a data final de* ***{(data.index.date.max()).strftime("%d-%m-%Y")}.***""")
                 st.markdown("<hr style='border:1px solid green'>", unsafe_allow_html=True)                
@@ -397,8 +397,8 @@ if processar:
             with col2:
                 st.subheader("Vendas Totais")
                 st.plotly_chart(fig2, use_container_width=True)            
-                st.markdown(f":green[***Informação:***] *O gráfico acima exibe o total em vendas no período selecionado.\
-                            \nTotal de vendas encontradas no dataframe: <span style='font-size: 20px'>{len(data)}</span> vendas.*", unsafe_allow_html=True)                
+                st.markdown(f":green[***Informação:***] *O gráfico acima mostra o total em vendas no período selecionado.\
+                            \nTotal de vendas concretizadas no período: <span style='font-size: 20px'>{len(data)}</span> vendas.*", unsafe_allow_html=True)                
                 
                 if df_nulos.isnull().values.any(): # Exibição de valores nulos na aplicação para maior transparência
                     st.warning(f"Foram detectados {nulos} valores nulos no conjunto de dados. Esses valores serão desconsiderados nas análises. ")
@@ -427,8 +427,8 @@ if processar:
                     
                                         
                     variacao_absoluta = soma_periodo_atual - soma_periodo_anterior
-                    sinal = "+" if variacao_absoluta >=0 else "-"
-                    st.metric(label="Variação do período atual em relação ao período de comparação", value=f"{sinal} R$ {(variacao_absoluta):,.2f}",
+                    sinal = "+" if variacao_absoluta >=0 else ""
+                    st.metric(label="Variação do período atual em relação ao período de comparação", value=f"R$ {sinal} {(variacao_absoluta):,.2f}",
                             delta=f"{((soma_periodo_atual / soma_periodo_anterior) - 1)* 100:,.2f}%", delta_color="normal")
                     
                     if len(periodo_anterior)< len(dados_agrupados):
@@ -558,7 +558,7 @@ if processar:
     except Exception as error:
         st.warning("Atenção. É extremamente importante que você selecione corretamente as colunas do dataframe na barra lateral caso você\
                    tenha feito o upload de um arquivo. Também é importante limpar os filtros de data pois a inserção de datas inexistentes\
-                   no conjunto de dados pode gerar dataframes vazios e consequentemente, erros na aplicação .")
+                   no conjunto de dados pode gerar dataframes vazios e, consequentemente, erros na aplicação .")
         st.error(f"Erro ao processar os dados inseridos. Por favor, verifique a compatibilidade do dataframe\
                  com a aplicação e tente novamente. Erro técnico encontrado: {error}")
                 
