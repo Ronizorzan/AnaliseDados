@@ -59,10 +59,10 @@ def gerador_de_calculos_e_graficos(data, coluna_data, coluna_id, coluna_categori
         data[coluna_id] = data[coluna_id].astype(str) #Transforma a coluna de identificação em string para plotagem adequada
         data_copy = data.copy()
         total_vendas = data[coluna_valor].sum()
-        vendas_por_categoria = data.groupby(coluna_categoria)[[coluna_valor]].sum()
+        vendas_por_categoria = data.groupby(coluna_categoria)[[coluna_valor]].sum().nlargest(10, coluna_valor)   #Top 10 categorias mais vendidas
         vendas_mensais = data.resample("MS")[[coluna_valor]].sum()
         crescimento_perc = vendas_mensais[[coluna_valor]].pct_change() *100
-        ticket_medio_categoria = data.groupby(coluna_categoria)[[coluna_valor]].mean()    
+        ticket_medio_categoria = data.groupby(coluna_categoria)[[coluna_valor]].mean().nlargest(10, coluna_valor) #Top 10 categorias com maior ticket médio
         ticket_medio_mes = data.resample("MS")[[coluna_valor]].mean()
         melhores_clientes = data.groupby(coluna_id)[[coluna_valor]].sum()
         clientes_frequentes = data.groupby(coluna_id)[[coluna_valor]].count()
@@ -78,15 +78,15 @@ def gerador_de_calculos_e_graficos(data, coluna_data, coluna_id, coluna_categori
 
 
         #Divisão dos Dados entre treino e teste        
-        proporcao_treino = int(0.7 * vendas.shape[0])
+        proporcao_treino = int(0.85 * vendas.shape[0])
         vendas[coluna_valor].dropna(inplace=True)
         treino = vendas.loc[: proporcao_treino, :]
         teste = vendas.loc[proporcao_treino:, :]
 
         
         #Treinamento do Modelo ARIMA        
-        modelo_arima = auto_arima(treino[coluna_valor], start_p=0, start_q=0, d=None, max_d=5, max_q=5, D=0,            #Hiper-parâmetros generalistas
-                           seasonal=True, trace=False, stepwise=True, start_P=0, start_Q=0, max_D=5, max_Q=5, m=12)
+        modelo_arima = auto_arima(treino[coluna_valor], start_p=0, start_q=0, d=None, max_d=5, max_q=7, D=0,            #Hiper-parâmetros generalistas
+                           seasonal=True, trace=False, stepwise=True, start_P=0, start_Q=0, max_D=7, max_Q=5, m=12)
         
         
         #Avaliação do Modelo
